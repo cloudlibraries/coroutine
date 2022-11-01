@@ -1,8 +1,10 @@
 package coroutine
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/cloudlibraries/safe"
 )
@@ -126,9 +128,55 @@ func Resume(c *Coroutine, input ...any) (output []any, err error) {
 	return c.Resume(input...)
 }
 
+// ResumeWithContext resumes a coroutine with context.
+func ResumeWithContext(ctx context.Context, c *Coroutine, input ...any) (output []any, err error) {
+	return c.ResumeWithContext(ctx, input...)
+}
+
+// ResumeWithTimeout resumes a coroutine with timeout.
+func ResumeWithTimeout(c *Coroutine, timeout time.Duration, input ...any) (output []any, err error) {
+	return c.ResumeWithTimeout(timeout, input...)
+}
+
 // Resume continues a suspend ID, passing data in and out.
 func (c *Coroutine) Resume(input ...any) (output []any, err error) {
 	err = safe.Do(func() error {
+		switch c.status {
+		case CLOSED:
+			return ErrCoroutineIsClosed
+
+		default:
+			output = <-c.outputCh
+			c.inputCh <- input
+		}
+
+		return nil
+	})
+
+	return
+}
+
+// ResumeWithContext resumes a coroutine with context.
+func (c *Coroutine) ResumeWithContext(ctx context.Context, input ...any) (output []any, err error) {
+	err = safe.DoWithContext(ctx, func() error {
+		switch c.status {
+		case CLOSED:
+			return ErrCoroutineIsClosed
+
+		default:
+			output = <-c.outputCh
+			c.inputCh <- input
+		}
+
+		return nil
+	})
+
+	return
+}
+
+// ResumeWithTimeout resumes a coroutine with timeout.
+func (c *Coroutine) ResumeWithTimeout(timeout time.Duration, input ...any) (output []any, err error) {
+	err = safe.DoWithTimeout(timeout, func() error {
 		switch c.status {
 		case CLOSED:
 			return ErrCoroutineIsClosed
@@ -149,9 +197,75 @@ func Yield(c *Coroutine, input ...any) (output []any, err error) {
 	return c.Yield(input...)
 }
 
+// YieldWithContext suspends a running coroutine with context, passing data in and out.
+func YieldWithContext(ctx context.Context, c *Coroutine, input ...any) (output []any, err error) {
+	return c.YieldWithContext(ctx, input...)
+}
+
+// YieldWithTimeout suspends a running coroutine with timeout, passing data in and out.
+func YieldWithTimeout(c *Coroutine, timeout time.Duration, input ...any) (output []any, err error) {
+	return c.YieldWithTimeout(timeout, input...)
+}
+
 // Yield suspends a running coroutine, passing data in and out.
 func (c *Coroutine) Yield(output ...any) (input []any, err error) {
 	err = safe.Do(func() error {
+		switch c.status {
+		case CLOSED:
+			return ErrCoroutineIsClosed
+
+		case CREATED:
+			c.outputCh <- output
+			input = <-c.inputCh
+
+			c.status = RUNNING
+
+		default:
+			c.status = SUSPENDED
+
+			c.outputCh <- output
+			input = <-c.inputCh
+
+			c.status = RUNNING
+		}
+
+		return nil
+	})
+
+	return
+}
+
+// YieldWithContext suspends a running coroutine with context, passing data in and out.
+func (c *Coroutine) YieldWithContext(ctx context.Context, output ...any) (input []any, err error) {
+	err = safe.DoWithContext(ctx, func() error {
+		switch c.status {
+		case CLOSED:
+			return ErrCoroutineIsClosed
+
+		case CREATED:
+			c.outputCh <- output
+			input = <-c.inputCh
+
+			c.status = RUNNING
+
+		default:
+			c.status = SUSPENDED
+
+			c.outputCh <- output
+			input = <-c.inputCh
+
+			c.status = RUNNING
+		}
+
+		return nil
+	})
+
+	return
+}
+
+// YieldWithTimeout suspends a running coroutine with timeout, passing data in and out.
+func (c *Coroutine) YieldWithTimeout(timeout time.Duration, output ...any) (input []any, err error) {
+	err = safe.DoWithTimeout(timeout, func() error {
 		switch c.status {
 		case CLOSED:
 			return ErrCoroutineIsClosed
