@@ -1,9 +1,8 @@
 package coroutine_test
 
 import (
-	"testing"
-
 	"strings"
+	"testing"
 
 	"github.com/cloudlibraries/cast"
 	"github.com/cloudlibraries/coroutine"

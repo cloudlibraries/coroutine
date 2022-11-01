@@ -1,5 +1,5 @@
-github.com/cloudlibraries/cast v0.0.0-20221031085711-c62b9ae1a309 h1:iuic+10ZUYKijyMOQ7W5Av5c5WLK/LD0Z3dkD2hSjUg=
-github.com/cloudlibraries/cast v0.0.0-20221031085711-c62b9ae1a309/go.mod h1:RePTM8YsWffjO8bvDceRErNaiy5u58aqfUdtj7evtOw=
+github.com/cloudlibraries/cast v1.0.0 h1:CM6hvLcGUScmdJSohamrueeYCYeERTyaAtcyv1RWNcE=
+github.com/cloudlibraries/cast v1.0.0/go.mod h1:RePTM8YsWffjO8bvDceRErNaiy5u58aqfUdtj7evtOw=
 github.com/frankban/quicktest v1.14.3 h1:FJKSZTDHjyhriyC81FLQ0LY93eSai0ZyR/ZIkd3ZUKE=
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
 github.com/kr/pretty v0.2.1/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
