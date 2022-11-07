@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cloudlibraries/safe"
+	"github.com/golibraries/safe"
 )
 
 var (
